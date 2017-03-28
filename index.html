@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script
+  src="https://code.jquery.com/jquery-3.1.1.js"
+  integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+  crossorigin="anonymous"></script>
+</head>
+<body>
+<!-- add input for username -->
+	<input type="text" id="username" placeholder="username"> 
+	<!-- add placeholder -->
+	<input type="text" id="input" placeholder="Your Message">
+	<button id="send">Send</button>
+	<div id="output"></div>
+	<script>
+
+		function getMessages(){
+			$.get("http://localhost:8080/chat", function(res){
+				// res ---> '["chats cleared", "a", "b"]'
+				var msgs = JSON.parse(res);
+				// msgs = ["chats cleared", "a", "b"]
+				$('#output').empty();
+				for (msg of msgs) {
+					var newPara = $('<p></p>');
+					newPara.html("Username: <button class='logbutton'>" + msg.username + "</button> Message:" + msg.message + " Timestamp:" + msg.timestamp); // HTML and text - button to contain username
+					$('#output').append(newPara);
+				}
+				$('.logbutton').click(getUserMessages); //function on username button to bring up new endpoint with just the user's posts
+			});
+		}
+
+		function getUserMessages(event){
+			var user = $(event.target).text();
+			console.log(user);
+			$.get("http://localhost:8080/log/" + user, function(res){
+				// res ---> '["chats cleared", "a", "b"]'
+				var msgs = JSON.parse(res); //dont know whats coming in so dont know it i want this
+				// msgs = ["chats cleared", "a", "b"]
+				$('#output').empty();
+				//if we are limited to params associated with one username - the loop should build a paragraph of messages by that user 
+				for (msg of msgs) {
+					var newPara = $('<p></p>');
+					newPara.text("Username: " + msg.username + " Message:" + msg.message + " Timestamp:" + msg.timestamp); // text, not HTML
+					$('#output').append(newPara);
+				}
+				$('#output').append('<button id="goBack">Go Back to Chat</button>');
+				$('#goBack').click(getMessages);
+			});
+		}
+
+		function sendMessage(){
+			var msg = $('#input').val(); 
+			var user = $('#username').val();
+
+			$('#input').val(""); // empty string -> clear input
+			$('#username').val(""); //clear
+			$.post("http://localhost:8080/chat", {
+				message: msg,
+				username: user
+			}, function(res) {
+				getMessages();
+			});
+		}
+
+		$('#send').click(sendMessage);
+
+		$('#input').keyup(function(event) {
+			if (event.keyCode === 13) {
+				// 13 is "enter" / "return"
+				sendMessage();
+			}
+		});
+
+		$(document).ready(function(){
+			getMessages();
+
+			// setInterval(getMessages, 1000);
+		})
+
+	</script>
+</body>
+</html>

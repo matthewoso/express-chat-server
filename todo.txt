@@ -1,0 +1,37 @@
+Before anything, run the command
+
+	npm install
+
+in this folder to download the node_modules for this assignment.
+
+PART ONE:
+
+Right now, we are just sending the messages as strings across to the server.
+
+Change this so that a message consists of three parts:
+	{
+		text: "Hi",
+		name: "Erty",
+		time: 087345043
+	}
+Where the text is the main message text, the name is a "username" that the user provides, and the time is a UNIX timestamp representing when the message was sent.
+
+The usernames do not need to be unique, secure, or anything. Simply provide a second text box for the user to set what username is sent to the server.
+
+Store all of these data in the messages array on the server, and send them forward to the client on request.
+
+Now, on the front end, display the name, time, and text of each message, instead of just the text.
+
+PART TWO:
+
+Write a new endpoint on the server, "/log/:username", which shows all of the messages sent by one user.
+
+For example http://localhost:8080/log/erty will show a listing of all of the messages sent by user "erty".
+
+As a hint, look up "req.params" in node/express.
+
+You do not need to be able to send messages from this page. This is a page you will visit in the browser ("GET" request)
+
+Optionally, make it so that clicking on a user's name takes you to their log page from the main chat ("/") page.
+
+
